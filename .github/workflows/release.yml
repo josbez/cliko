@@ -22,4 +22,4 @@ jobs:
         run: |
           gh release create "$GITHUB_REF_NAME" Cliko.dmg \
             --title "Cliko ${GITHUB_REF_NAME#v}" \
-            --notes-file <(sed -n "/^## ${GITHUB_REF_NAME#v}\$/,/^## /p" CHANGELOG.md | sed '1d;$d')
+            --notes-file <(awk -v v="## ${GITHUB_REF_NAME#v}" '$0 == v {on=1; next} /^## / {on=0} on' CHANGELOG.md)

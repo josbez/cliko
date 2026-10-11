@@ -12,5 +12,3 @@ First release.
 - macOS 12 or later, Apple Silicon and Intel
 
 Install: open `Cliko.dmg`, drag Cliko to Applications, then run `bash /Volumes/Cliko/install.sh` in Terminal.
-
-## end
