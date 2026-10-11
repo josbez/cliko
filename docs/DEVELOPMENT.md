@@ -50,6 +50,15 @@ Check the live source:
 - Language: menu → Language (same as macOS, Nederlands, English); stored as `language` in `settings.json`.
 - App icon: `icon/Cliko.svg`, rendered to `icon/Cliko-1024.png`; `build.sh` turns the PNG into `Cliko.icns`.
 
+## Design system
+
+The [Cliko design system](https://claude.ai/artifact/XaSd98r3ftzsqJtx1Xmoqy) (private Claude Design artifact) leads: the SF Symbols per waste type, point sizes, the drawn PMD bag, the app icon colours and the tone. The code and these docs follow it.
+
+- **Look it up first.** Read its README and tokens before you change the menu, the icons or the app icon. Build with what is there.
+- **Missing or wrong? Change the design system first** (a symbol, a size, a colour, a rule), then the code.
+- **Every PR that changes the UI** (menu, menu bar icon, symbols, `Cliko/Icons.swift`, the app icon, user-facing copy rules) updates the design system and says what changed in its description.
+- **One design system** for Cliko: revise it, never create a second one.
+
 ## Making a release
 
 1. Bump `VERSION` in `scripts/build.sh` and add a `## X.Y` section at the top of `CHANGELOG.md` (it becomes the release notes). Commit and push.
