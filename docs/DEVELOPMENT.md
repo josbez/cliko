@@ -53,7 +53,7 @@ Check the live source:
 ## Making a release
 
 1. Bump `VERSION` in `scripts/build.sh` and add a `## X.Y` section at the top of `CHANGELOG.md` (it becomes the release notes). Commit and push.
-2. Tag and push: `git tag vX.Y && git push origin vX.Y`. The Release workflow builds `Cliko.dmg` on macOS and publishes the release with it.
+2. Tag and push (`git tag vX.Y && git push origin vX.Y`), or run Actions → **Release** with the version. The workflow builds `Cliko.dmg` on macOS and publishes the release with it.
 3. Sign that DMG on the release Mac and attach the signature:
    ```bash
    gh release download vX.Y -p Cliko.dmg
