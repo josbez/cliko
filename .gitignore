@@ -1,0 +1,13 @@
+*.dmg
+*.dmg.sig
+.DS_Store
+.claude/
+.idea/
+
+# Private notes: stay local, never public
+backlog.md
+CLAUDE.md
+
+# Swift build output
+swift/.build/
+dist/

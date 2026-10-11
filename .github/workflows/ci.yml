@@ -1,0 +1,16 @@
+name: CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tests
+        working-directory: swift
+        run: swift test
+      - name: Universal release build
+        working-directory: swift
+        run: swift build -c release --arch arm64 --arch x86_64

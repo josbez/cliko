@@ -1,0 +1,23 @@
+# Checks the live Ximmio calendar. Run by hand (Actions → Probe Ximmio).
+# Workflow inputs show up in the public log: use a public address, such as
+# the municipal office (the default), never your own.
+name: Probe Ximmio
+on:
+  workflow_dispatch:
+    inputs:
+      postcode:
+        description: Postcode (public address only)
+        default: 3241XB
+      number:
+        description: House number
+        default: "45"
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          POSTCODE: ${{ inputs.postcode }}
+          NUMBER: ${{ inputs.number }}
+        run: ./scripts/probe-ximmio.sh "$POSTCODE" "$NUMBER"
