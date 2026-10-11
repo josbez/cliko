@@ -42,10 +42,12 @@ final class XimmioTests: XCTestCase {
     func testParsesCalendarSortedWithKinds() throws {
         let pickups = try Ximmio.parseCalendar(try fixture("calendar"))
         XCTAssertEqual(pickups.count, 12)   // 5 PMD + 2 GFT + 1 paper + 2 rest + 1 tree (bad date skipped) + 1 KCA
-        XCTAssertEqual(pickups.first, Pickup(day: Day(year: 2026, month: 9, day: 30), kind: .pmd, label: "PMD zak"))
+        XCTAssertEqual(pickups.first, Pickup(day: Day(year: 2026, month: 9, day: 30), kind: .pmd, label: "PACKAGES"))
         XCTAssertEqual(pickups.map(\.day), pickups.map(\.day).sorted())
         XCTAssertEqual(pickups.first { $0.day == Day(year: 2026, month: 10, day: 15) }?.kind, .paper)
-        XCTAssertEqual(pickups.first { $0.label == "KLEIN CHEMISCH AFVAL" }?.kind, .other)
+        // "Null" description falls back to the type code
+        XCTAssertEqual(pickups.first { $0.label == "KCA" }?.kind, .other)
+        XCTAssertEqual(pickups.first { $0.kind == .tree }?.label, "Kerstbomen")
         XCTAssertEqual(pickups.last?.kind, .tree)
     }
 

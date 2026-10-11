@@ -1,8 +1,8 @@
 {"dataList":[
- {"pickupDates":["2026-09-30T00:00:00","2026-10-07T00:00:00","2026-10-14T00:00:00","2026-10-21T00:00:00","2026-10-28T00:00:00"],"pickupType":10,"_pickupType":10,"_pickupTypeText":"PACKAGES","description":"PMD zak"},
- {"pickupDates":["2026-10-08T00:00:00","2026-10-22T00:00:00"],"pickupType":1,"_pickupType":1,"_pickupTypeText":"GREEN","description":"Container gft (groen)"},
- {"pickupDates":["2026-10-15T00:00:00"],"pickupType":2,"_pickupType":2,"_pickupTypeText":"PAPER","description":"Container oud papier"},
- {"pickupDates":["2026-10-01T00:00:00","2026-10-29T00:00:00"],"pickupType":0,"_pickupType":0,"_pickupTypeText":"GREY","description":"Container restafval (grijs)"},
+ {"pickupDates":["2026-09-30T00:00:00","2026-10-07T00:00:00","2026-10-14T00:00:00","2026-10-21T00:00:00","2026-10-28T00:00:00"],"pickupType":10,"_pickupType":10,"_pickupTypeText":"PACKAGES","description":"Null"},
+ {"pickupDates":["2026-10-08T00:00:00","2026-10-22T00:00:00"],"pickupType":1,"_pickupType":1,"_pickupTypeText":"GREEN","description":"Null"},
+ {"pickupDates":["2026-10-15T00:00:00"],"pickupType":2,"_pickupType":2,"_pickupTypeText":"PAPER","description":"Null"},
+ {"pickupDates":["2026-10-01T00:00:00","2026-10-29T00:00:00"],"pickupType":0,"_pickupType":0,"_pickupTypeText":"GREY","description":"Null"},
  {"pickupDates":["2027-01-09T00:00:00","not-a-date"],"pickupType":99,"_pickupType":99,"_pickupTypeText":"TREE","description":"Kerstbomen"},
- {"pickupDates":["2026-11-02T00:00:00"],"pickupType":98,"_pickupType":98,"_pickupTypeText":"KCA","description":"KLEIN CHEMISCH AFVAL"}
+ {"pickupDates":["2026-11-02T00:00:00"],"pickupType":98,"_pickupType":98,"_pickupTypeText":"KCA","description":"Null"}
 ],"status":true}

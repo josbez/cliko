@@ -56,7 +56,9 @@ public enum Ximmio {
         var out = Set<Pickup>()
         for item in list {
             let code = item["_pickupTypeText"] as? String ?? ""
-            let description = (item["description"] as? String).flatMap { $0.isEmpty ? nil : $0 } ?? code
+            // RAD sends the literal string "Null" when there is no description
+            let description = (item["description"] as? String)
+                .flatMap { $0.isEmpty || $0.lowercased() == "null" ? nil : $0 } ?? code
             let kind = WasteKind(ximmioCode: code)
             for s in item["pickupDates"] as? [String] ?? [] {
                 if let day = Day(iso: s) { out.insert(Pickup(day: day, kind: kind, label: description)) }

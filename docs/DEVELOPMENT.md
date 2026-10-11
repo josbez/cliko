@@ -32,7 +32,7 @@ RAD's calendar comes from Ximmio (`wasteprod2api.ximmio.com`, company code `13a2
 1. `api/FetchAdress`: `postCode`, `houseNumber`, `companyCode` → `dataList[0].UniqueId`, `Community`
 2. `api/GetCalendar`: `uniqueAddressID`, `startDate`, `endDate`, `companyCode`, `community` → `dataList[]` with `_pickupTypeText` (GREY, GREEN, PAPER, PACKAGES, …), `description` and `pickupDates`
 
-The fixtures in `swift/Tests/ClikoCoreTests/Fixtures` are modelled on that shape and on the October 2026 calendar of the official app; replace them with a captured answer once one is at hand.
+Confirmed against a live RAD address (October 2026): the four codes above, weekly PACKAGES on Wednesday and GREEN/PAPER/GREY on Thursday. RAD sends `description` as the literal string `"Null"`, so labels come from `strings.json`. The fixtures in `swift/Tests/ClikoCoreTests/Fixtures` follow that answer.
 
 Check the live source:
 
