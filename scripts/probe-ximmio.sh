@@ -14,7 +14,7 @@ addr=$(curl -fsS -m 20 -X POST "$BASE/api/FetchAdress" \
 id=$(jq -r '.dataList[0].UniqueId // empty' <<<"$addr")
 community=$(jq -r '.dataList[0].Community // ""' <<<"$addr")
 if [ -z "$id" ]; then
-    echo "✗ adres niet gevonden; antwoord zonder dataList: $(jq -c 'del(.dataList)' <<<"$addr")"
+X
     exit 1
 fi
 echo "✓ adres gevonden (community: ${community:--}); velden: $(jq -c '.dataList[0] | keys' <<<"$addr")"

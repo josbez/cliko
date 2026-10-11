@@ -181,7 +181,7 @@ extension AppDelegate {
         do {
             let dmg = work.appendingPathComponent(dmgAsset)
             let sig = String(decoding: try curl(sigURL, timeout: 30), as: UTF8.self)
-            try curl(dmgURL, to: dmg, timeout: 600)
+            _ = try curl(dmgURL, to: dmg, timeout: 600)
             guard verifyReleaseSignature(try Data(contentsOf: dmg), sig) else { throw UpdateError("sig_invalid") }
 
             let mnt = work.appendingPathComponent("mnt")
