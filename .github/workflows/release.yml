@@ -1,0 +1,25 @@
+# Push a tag vX.Y → build Cliko.dmg on macOS and publish a GitHub release with it.
+# The release key never leaves the release Mac, so the .sig is added by hand
+# afterwards (docs/DEVELOPMENT.md, Making a release).
+name: Release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build DMG
+        run: VERSION="${GITHUB_REF_NAME#v}" ./scripts/make-dmg.sh
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" Cliko.dmg \
+            --title "Cliko ${GITHUB_REF_NAME#v}" \
+            --notes-file <(sed -n "/^## ${GITHUB_REF_NAME#v}\$/,/^## /p" CHANGELOG.md | sed '1d;$d')

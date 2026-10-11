@@ -52,11 +52,19 @@ Check the live source:
 
 ## Making a release
 
-1. Bump `VERSION` in `scripts/build.sh`. Commit and push.
-2. `./scripts/make-dmg.sh` creates `Cliko.dmg` and `Cliko.dmg.sig`.
-3. Create a GitHub release with tag `vX.Y` and **both** files attached. Without the `.sig`, the in-app updater rejects the release.
+1. Bump `VERSION` in `scripts/build.sh` and add a `## X.Y` section at the top of `CHANGELOG.md` (it becomes the release notes). Commit and push.
+2. Tag and push: `git tag vX.Y && git push origin vX.Y`. The Release workflow builds `Cliko.dmg` on macOS and publishes the release with it.
+3. Sign that DMG on the release Mac and attach the signature:
+   ```bash
+   gh release download vX.Y -p Cliko.dmg
+   dist/Cliko.app/Contents/MacOS/Cliko --sign-release Cliko.dmg   # → Cliko.dmg.sig
+   gh release upload vX.Y Cliko.dmg.sig
+   ```
+   Without the `.sig`, installed apps refuse the update. A first install (by hand) doesn't need it.
 
-Releases are signed with the same Ed25519 key as Usage Meter (`~/.config/claude-usage/release-signing-key.pem`, never in git; `updatePublicKeyHex` in `ClikoCore/Update.swift`). `--sign-release` refuses a key that doesn't match.
+Or build and sign locally in one go: `./scripts/make-dmg.sh`, then upload both files to a release.
+
+Releases are signed with the same Ed25519 key as Usage Meter (`~/.config/claude-usage/release-signing-key.pem`, never in git or CI; `updatePublicKeyHex` in `ClikoCore/Update.swift`). `--sign-release` refuses a key that doesn't match.
 
 ## Pitfalls
 
