@@ -38,11 +38,16 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/Cliko"
 cp swift/Resources/strings.json "$APP/Contents/Resources/"
-ICON_KEY=""
-if [ -f icon/Cliko.icns ]; then
-    cp icon/Cliko.icns "$APP/Contents/Resources/"
-    ICON_KEY="<key>CFBundleIconFile</key><string>Cliko</string>"
-fi
+# App icon: icon/Cliko-1024.png → Cliko.icns (sips + iconutil, both part of macOS)
+ICONSET=$(mktemp -d)/Cliko.iconset
+mkdir -p "$ICONSET"
+for size in 16 32 128 256 512; do
+    sips -z $size $size icon/Cliko-1024.png --out "$ICONSET/icon_${size}x${size}.png" >/dev/null
+    sips -z $((size * 2)) $((size * 2)) icon/Cliko-1024.png --out "$ICONSET/icon_${size}x${size}@2x.png" >/dev/null
+done
+iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/Cliko.icns" || fail "iconutil faalde"
+rm -rf "$(dirname "$ICONSET")"
+ICON_KEY="<key>CFBundleIconFile</key><string>Cliko</string>"
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>

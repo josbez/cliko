@@ -72,7 +72,9 @@ public enum WasteKind: String, CaseIterable, Codable {
         }
     }
 
-    /// SF Symbol, drawn as a template image (monochrome, tinted like the other menu bar icons).
+    /// SF Symbol, drawn as a template image (monochrome, tinted like the other
+    /// menu bar icons). PMD has no fitting symbol; the app draws a bin bag and
+    /// uses this one only where it can't.
     public var symbolName: String {
         switch self {
         case .rest: return "trash"

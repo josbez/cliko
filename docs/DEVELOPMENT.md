@@ -46,6 +46,9 @@ Check the live source:
 - The calendar is fetched at start, every 12 hours, and 30 minutes after a failure; a fetched calendar is kept for offline use.
 - Reminders are scheduled with macOS in advance (calendar triggers, up to five weeks ahead) and rescheduled after every fetch.
 - Unknown waste types show as a box with Ximmio's own description.
+- Icons are SF Symbols, except PMD: a tied bin bag drawn in `Cliko/Icons.swift` (SF Symbols has none). Menu rows with an icon are custom views, because plain `NSMenuItem.image` didn't show on macOS 26.
+- Language: menu → Language (same as macOS, Nederlands, English); stored as `language` in `settings.json`.
+- App icon: `icon/Cliko.svg`, rendered to `icon/Cliko-1024.png`; `build.sh` turns the PNG into `Cliko.icns`.
 
 ## Making a release
 

@@ -54,6 +54,11 @@ public func languageFrom(_ preferred: [String]) -> String {
     return base == "nl" ? "nl" : "en"
 }
 
+/// The language setting ("system", "nl", "en") -> "nl" or "en".
+public func resolvedLanguage(_ setting: String, preferred: [String]) -> String {
+    setting == "nl" || setting == "en" ? setting : languageFrom(preferred)
+}
+
 // MARK: - Texts built from pickups
 
 public func kindLabel(_ pickup: Pickup, _ strings: Strings, _ lang: String) -> String {

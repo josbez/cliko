@@ -196,6 +196,10 @@ final class TextTests: XCTestCase {
         XCTAssertEqual(languageFrom(["nl-NL", "en-US"]), "nl")
         XCTAssertEqual(languageFrom(["en-NL", "nl-NL"]), "en")
         XCTAssertEqual(languageFrom([]), "en")
+        XCTAssertEqual(resolvedLanguage("system", preferred: ["nl-NL"]), "nl")
+        XCTAssertEqual(resolvedLanguage("en", preferred: ["nl-NL"]), "en")
+        XCTAssertEqual(resolvedLanguage("nl", preferred: ["en-US"]), "nl")
+        XCTAssertEqual(resolvedLanguage("fr", preferred: ["en-US"]), "en")
     }
 }
 
@@ -217,6 +221,7 @@ final class SettingsTests: XCTestCase {
         XCTAssertNil(s.houseNumber)
         XCTAssertTrue(s.reminders)
         XCTAssertEqual(s.reminderHour, 19)
+        XCTAssertEqual(s.language, "system")
         XCTAssertFalse(s.hasAddress)
     }
 

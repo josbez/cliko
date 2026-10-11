@@ -11,6 +11,5 @@ jobs:
       - name: Tests
         working-directory: swift
         run: swift test
-      - name: Universal release build
-        working-directory: swift
-        run: swift build -c release --arch arm64 --arch x86_64
+      - name: Release app bundle (tests, universal build, icon, codesign)
+        run: ./scripts/build.sh --release

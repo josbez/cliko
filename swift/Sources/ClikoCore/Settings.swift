@@ -9,6 +9,8 @@ public struct Settings: Codable, Equatable {
     public var reminderHour = 19
     public var reminderMinute = 0
     public var updateCheck = true
+    /// "system" (follow macOS), "nl" or "en".
+    public var language = "system"
 
     public init() {}
 
@@ -21,6 +23,7 @@ public struct Settings: Codable, Equatable {
         reminderHour = try c.decodeIfPresent(Int.self, forKey: .reminderHour) ?? 19
         reminderMinute = try c.decodeIfPresent(Int.self, forKey: .reminderMinute) ?? 0
         updateCheck = try c.decodeIfPresent(Bool.self, forKey: .updateCheck) ?? true
+        language = try c.decodeIfPresent(String.self, forKey: .language) ?? "system"
     }
 
     public var hasAddress: Bool { postcode != nil && houseNumber != nil }

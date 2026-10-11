@@ -6,7 +6,8 @@ macOS menu bar app: which bin goes out next.
 - Follows the real calendar, holiday shifts included
 - Notification the evening before (19:00)
 - Click for the next four collections
-- For RAD (Goeree-Overflakkee, Hoeksche Waard) via Ximmio; Dutch and English
+- For RAD (Goeree-Overflakkee, Hoeksche Waard) via Ximmio
+- Dutch or English: follows macOS, or pick one in the menu
 
 ## Requirements
 

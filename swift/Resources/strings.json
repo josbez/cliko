@@ -1,12 +1,54 @@
 {
   "default_lang": "en",
   "days": {
-    "nl": ["zo", "ma", "di", "wo", "do", "vr", "za"],
-    "en": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    "nl": [
+      "zo",
+      "ma",
+      "di",
+      "wo",
+      "do",
+      "vr",
+      "za"
+    ],
+    "en": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ]
   },
   "months": {
-    "nl": ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"],
-    "en": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    "nl": [
+      "jan",
+      "feb",
+      "mrt",
+      "apr",
+      "mei",
+      "jun",
+      "jul",
+      "aug",
+      "sep",
+      "okt",
+      "nov",
+      "dec"
+    ],
+    "en": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ]
   },
   "strings": {
     "nl": {
@@ -66,7 +108,11 @@
       "alert_uninstall_title": "Cliko verwijderen?",
       "alert_uninstall_body": "De app gaat naar de Prullenbak; instellingen, kalender en de start bij inloggen worden verwijderd.",
       "btn_uninstall": "Verwijder",
-      "alert_uninstall_failed_title": "Verwijderen mislukt"
+      "alert_uninstall_failed_title": "Verwijderen mislukt",
+      "menu_language": "Taal",
+      "lang_system": "Zoals macOS ({language})",
+      "lang_name_nl": "Nederlands",
+      "lang_name_en": "Engels"
     },
     "en": {
       "kind_rest": "Residual waste",
@@ -125,7 +171,11 @@
       "alert_uninstall_title": "Uninstall Cliko?",
       "alert_uninstall_body": "The app goes to the Trash; settings, calendar and the start at login are removed.",
       "btn_uninstall": "Uninstall",
-      "alert_uninstall_failed_title": "Uninstall failed"
+      "alert_uninstall_failed_title": "Uninstall failed",
+      "menu_language": "Language",
+      "lang_system": "Same as macOS ({language})",
+      "lang_name_nl": "Dutch",
+      "lang_name_en": "English"
     }
   }
 }

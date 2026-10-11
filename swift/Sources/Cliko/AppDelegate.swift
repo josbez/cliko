@@ -30,7 +30,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     var calendar: Calendar { .current }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        lang = languageFrom(Locale.preferredLanguages)
         if let url = Bundle.main.url(forResource: "strings", withExtension: "json") ?? Self.sourceTreeStrings,
            let loaded = try? Strings(contentsOf: url) {
             strings = loaded
@@ -38,6 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             log("strings.json niet gevonden")
         }
         settings = loadJSON(Settings.self, from: paths.settings) ?? Settings()
+        lang = resolvedLanguage(settings.language, preferred: Locale.preferredLanguages)
         cache = loadJSON(CalendarCache.self, from: paths.calendar)
         log("Cliko \(version) gestart")
 
@@ -149,31 +149,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard let button = statusItem?.button else { return }
         let now = Date()
         let next = nextPickups(upcomingPickups(cache?.pickups ?? [], now: now, calendar: calendar))
-        let symbol: String
+        let image: NSImage?
         let tip: String
         if !settings.hasAddress {
-            symbol = "trash.slash"
+            image = symbolImage("trash.slash", pointSize: 14)
             tip = t("tooltip_setup")
         } else if let first = next.first {
-            symbol = first.kind.symbolName
+            image = wasteIcon(first.kind, pointSize: 14)
             tip = t("tooltip_next", ["when": whenLabel(first.day, now: now, strings, lang, calendar: calendar),
                                      "what": joinedLabels(next, strings, lang)])
         } else {
-            symbol = "trash.slash"
+            image = symbolImage("trash.slash", pointSize: 14)
             tip = lastError ?? t("menu_no_pickups")
         }
-        button.image = symbolImage(symbol, pointSize: 14)
+        button.image = image
         button.imagePosition = isDev ? .imageLeading : .imageOnly
         button.title = isDev ? "β" : ""
         button.toolTip = "Cliko — " + tip
-    }
-
-    func symbolImage(_ name: String, pointSize: CGFloat) -> NSImage? {
-        let base = NSImage(systemSymbolName: name, accessibilityDescription: name)
-            ?? NSImage(systemSymbolName: "calendar", accessibilityDescription: name)
-        let image = base?.withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: pointSize, weight: .regular))
-        image?.isTemplate = true
-        return image
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
@@ -187,9 +179,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         } else {
             for p in upcoming.prefix(4) {
                 let when = whenLabel(p.day, now: now, strings, lang, calendar: calendar)
-                let item = NSMenuItem(title: "\(when) — \(kindLabel(p, strings, lang))", action: nil, keyEquivalent: "")
-                item.image = symbolImage(p.kind.symbolName, pointSize: 13)
-                menu.addItem(item)
+                menu.addItem(iconMenuItem("\(when) — \(kindLabel(p, strings, lang))",
+                                          image: wasteIcon(p.kind, pointSize: 13)))
             }
             if let lastError { menu.addItem(infoItem(lastError)) }
         }
@@ -205,6 +196,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         } else {
             menu.addItem(actionItem(t("menu_address"), #selector(editAddress)))
         }
+        menu.addItem(languageItem())
         if let update, !updateInstalling {
             menu.addItem(actionItem(t("menu_update", ["version": update.version]), #selector(startUpdate)))
         }
@@ -273,6 +265,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         scheduleReminders()   // drops the old address' reminders until the fetch is in
         refreshIcon()
         fetch()
+    }
+
+    /// "Language" with Same as macOS / Nederlands / English.
+    func languageItem() -> NSMenuItem {
+        let item = NSMenuItem(title: t("menu_language"), action: nil, keyEquivalent: "")
+        let sub = NSMenu()
+        sub.autoenablesItems = false
+        let system = resolvedLanguage("system", preferred: Locale.preferredLanguages)
+        let choices = [("system", t("lang_system", ["language": t("lang_name_" + system)])),
+                       ("nl", "Nederlands"), ("en", "English")]
+        for (code, title) in choices {
+            let choice = actionItem(title, #selector(chooseLanguage(_:)))
+            choice.representedObject = code
+            choice.state = settings.language == code ? .on : .off
+            sub.addItem(choice)
+        }
+        item.submenu = sub
+        return item
+    }
+
+    @objc func chooseLanguage(_ sender: NSMenuItem) {
+        guard let code = sender.representedObject as? String, code != settings.language else { return }
+        settings.language = code
+        saveSettings()
+        lang = resolvedLanguage(code, preferred: Locale.preferredLanguages)
+        log("taal: \(code) → \(lang)")
+        refreshIcon()
+        scheduleReminders()   // reminder texts in the new language
     }
 
     @objc func quit() {
