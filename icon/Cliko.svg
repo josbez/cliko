@@ -17,15 +17,12 @@
   </defs>
   <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)" filter="url(#drop)"/>
   <g filter="url(#glyph)">
-    <circle cx="392" cy="790" r="44" fill="#1f5a39"/>
-    <circle cx="632" cy="790" r="44" fill="#1f5a39"/>
-    <circle cx="392" cy="790" r="18" fill="#cfe3d6"/>
-    <circle cx="632" cy="790" r="18" fill="#cfe3d6"/>
-    <path d="M326 372 H698 L664 748 Q660 776 632 776 H392 Q364 776 360 748 Z" fill="url(#bin)"/>
-    <rect x="440" y="256" width="144" height="56" rx="20" fill="#ffffff"/>
-    <rect x="292" y="292" width="440" height="74" rx="26" fill="#ffffff"/>
-    <g stroke="#9cc7ab" stroke-width="16" stroke-linecap="round">
-      <path d="M436 440 L446 700"/><path d="M512 440 V700"/><path d="M588 440 L578 700"/>
-    </g>
+    <path d="M700 314 L764 300" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round"/>
+    <path d="M352 362 H676 L654 772 H376 Z" fill="url(#bin)"/>
+    <rect x="296" y="296" width="428" height="68" rx="24" fill="#fff"/>
+    <path d="M368 468 H664" stroke="#9cc7ab" stroke-width="16" stroke-linecap="round"/>
+    <rect x="372" y="768" width="70" height="40" rx="12" fill="#fff"/>
+    <circle cx="636" cy="770" r="72" fill="#1f5a39"/>
+    <circle cx="636" cy="770" r="26" fill="#cfe3d6"/>
   </g>
 </svg>
