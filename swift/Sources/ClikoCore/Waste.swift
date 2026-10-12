@@ -93,13 +93,17 @@ public enum WasteKind: String, CaseIterable, Codable {
 public struct Pickup: Hashable, Codable, Comparable {
     public let day: Day
     public let kind: WasteKind
-    /// Ximmio's own description; shown for `.other`.
+    /// Ximmio's own description; shown for `.other`. Its code when there is none.
     public let label: String
+    /// Ximmio's `_pickupTypeText` ("KCA"). Optional: calendars cached before
+    /// it was kept don't have it.
+    public let code: String?
 
-    public init(day: Day, kind: WasteKind, label: String) {
+    public init(day: Day, kind: WasteKind, label: String, code: String? = nil) {
         self.day = day
         self.kind = kind
         self.label = label
+        self.code = code
     }
 
     public static func < (a: Pickup, b: Pickup) -> Bool {

@@ -63,6 +63,8 @@ public func resolvedLanguage(_ setting: String, preferred: [String]) -> String {
 
 public func kindLabel(_ pickup: Pickup, _ strings: Strings, _ lang: String) -> String {
     guard pickup.kind == .other else { return strings.t("kind_" + pickup.kind.rawValue, lang) }
+    // No description: the code as Ximmio sends it ("KCA", not "Kca")
+    if pickup.label == pickup.code { return pickup.label }
     let label = pickup.label.lowercased()
     return label.prefix(1).uppercased() + label.dropFirst()
 }

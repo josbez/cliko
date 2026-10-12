@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     var statusItem: NSStatusItem!
     var timer: Timer?
+    var cutoffTimer: Timer?
     let notifyDelegate = NotificationDelegate()
 
     var update: Release?
@@ -73,11 +74,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         DispatchQueue.main.async { self.tick() }
     }
 
-    /// Every 5 minutes, on wake and at midnight: redraw, fetch when due, check for updates.
+    /// Every 5 minutes, on wake, at midnight and at noon: redraw, fetch when due, check for updates.
     func tick() {
         refreshIcon()
+        scheduleCutoff()
         if fetchDue(cache: cache, settings: settings, lastFailure: lastFailure, now: Date()) { fetch() }
         maybeCheckUpdates()
+    }
+
+    /// At noon the icon moves on to the next collection, like the menu does:
+    /// a timer for that moment, so it doesn't wait for the next 5-minute tick.
+    func scheduleCutoff() {
+        cutoffTimer?.invalidate()
+        guard let fire = nextCutoff(after: Date(), calendar: calendar) else { return }
+        let noon = Timer(fire: fire, interval: 0, repeats: false) { [weak self] _ in self?.tick() }
+        RunLoop.main.add(noon, forMode: .common)
+        cutoffTimer = noon
     }
 
     func t(_ key: String, _ kw: [String: Any] = [:]) -> String { strings.t(key, lang, kw) }
@@ -102,6 +114,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func fetch() {
         guard !fetching, let postcode = settings.postcode, let number = settings.houseNumber else { return }
         fetching = true
+        refreshIcon()   // "fetching collection days…" while there is nothing yet
         let cal = calendar
         Task.detached {
             let result: Result<CalendarCache, Error>
@@ -160,7 +173,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                                      "what": joinedLabels(next, strings, lang)])
         } else {
             image = symbolImage("trash.slash", pointSize: 14)
-            tip = lastError ?? t("menu_no_pickups")
+            tip = lastError ?? emptyLine
         }
         button.image = image
         button.imagePosition = isDev ? .imageLeading : .imageOnly
@@ -175,7 +188,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if !settings.hasAddress {
             menu.addItem(infoItem(t("menu_no_address")))
         } else if upcoming.isEmpty {
-            menu.addItem(infoItem(lastError ?? t("menu_no_pickups")))
+            menu.addItem(infoItem(lastError ?? emptyLine))
         } else {
             for p in upcoming.prefix(4) {
                 let when = whenLabel(p.day, now: now, strings, lang, calendar: calendar)
@@ -205,6 +218,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(actionItem(t("menu_quit"), #selector(quit), key: "q"))
     }
 
+    /// No collections to show: still fetching (a new address) or none known.
+    var emptyLine: String { t(fetching ? "menu_loading" : "menu_no_pickups") }
+
     func infoItem(_ title: String) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         item.isEnabled = false
@@ -227,16 +243,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     @objc func editAddress() {
+        askAddress(postcode: settings.postcode.map(formatPostcode) ?? "", number: settings.houseNumber ?? "")
+    }
+
+    /// The address dialog, filled with `postcode` and `number`. Invalid input:
+    /// say so, then ask again with what was typed.
+    func askAddress(postcode typedPostcode: String, number typedNumber: String) {
         NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
         alert.messageText = t("address_title")
         alert.informativeText = t("address_body")
         let postcode = NSTextField(frame: NSRect(x: 0, y: 32, width: 240, height: 24))
         postcode.placeholderString = t("address_postcode") + " (1234 AB)"
-        postcode.stringValue = settings.postcode.map(formatPostcode) ?? ""
+        postcode.stringValue = typedPostcode
         let number = NSTextField(frame: NSRect(x: 0, y: 0, width: 240, height: 24))
         number.placeholderString = t("address_number")
-        number.stringValue = settings.houseNumber ?? ""
+        number.stringValue = typedNumber
         postcode.nextKeyView = number
         let box = NSView(frame: NSRect(x: 0, y: 0, width: 240, height: 56))
         box.addSubview(postcode)
@@ -251,6 +273,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let invalid = NSAlert()
             invalid.messageText = t("address_invalid")
             invalid.runModal()
+            askAddress(postcode: postcode.stringValue, number: number.stringValue)
             return
         }
         guard pc != settings.postcode || nr != settings.houseNumber else { return }
