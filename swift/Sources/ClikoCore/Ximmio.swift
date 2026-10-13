@@ -61,7 +61,7 @@ public enum Ximmio {
                 .flatMap { $0.isEmpty || $0.lowercased() == "null" ? nil : $0 } ?? code
             let kind = WasteKind(ximmioCode: code)
             for s in item["pickupDates"] as? [String] ?? [] {
-                if let day = Day(iso: s) { out.insert(Pickup(day: day, kind: kind, label: description)) }
+                if let day = Day(iso: s) { out.insert(Pickup(day: day, kind: kind, label: description, code: code)) }
             }
         }
         return out.sorted()

@@ -5,6 +5,15 @@ import Foundation
 /// Thursday's bin.
 public let pickupDayCutoffHour = 12
 
+/// The next moment the icon moves on: today at the cutoff hour, or tomorrow's
+/// once that has passed. The app redraws exactly then, not at its next check.
+public func nextCutoff(after now: Date, calendar: Calendar = .current) -> Date? {
+    let today = Day(now, calendar: calendar)
+    guard let todays = today.date(hour: pickupDayCutoffHour, minute: 0, calendar: calendar) else { return nil }
+    if todays > now { return todays }
+    return today.adding(days: 1, calendar: calendar)?.date(hour: pickupDayCutoffHour, minute: 0, calendar: calendar)
+}
+
 /// Pickups still to come, sorted.
 public func upcomingPickups(_ pickups: [Pickup], now: Date, calendar: Calendar = .current) -> [Pickup] {
     let today = Day(now, calendar: calendar)

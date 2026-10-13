@@ -42,10 +42,11 @@ Check the live source:
 
 ## Behaviour
 
-- On a collection day the icon moves on at noon (`pickupDayCutoffHour`), so Wednesday evening shows Thursday's bin.
-- The calendar is fetched at start, every 12 hours, and 30 minutes after a failure; a fetched calendar is kept for offline use.
+- On a collection day the icon moves on at noon (`pickupDayCutoffHour`), so Wednesday evening shows Thursday's bin. A timer fires at that moment (`nextCutoff`), so icon, tooltip and menu change together.
+- The calendar is fetched at start, every 12 hours, and 30 minutes after a failure; a fetched calendar is kept for offline use. With nothing to show yet (a new address), the menu says "Fetching collection days…" until it is in.
 - Reminders are scheduled with macOS in advance (calendar triggers, up to five weeks ahead) and rescheduled after every fetch.
-- Unknown waste types show as a box with Ximmio's own description.
+- Unknown waste types show as a box with Ximmio's own description; without one, the code as Ximmio sends it ("KCA").
+- Invalid address input: the app says so, then opens the address dialog again with what was typed.
 - Icons are SF Symbols, except PMD: a tied bin bag drawn in `Cliko/Icons.swift` (SF Symbols has none). Menu rows with an icon are custom views, because plain `NSMenuItem.image` didn't show on macOS 26.
 - Language: menu → Language (same as macOS, Nederlands, English); stored as `language` in `settings.json`.
 - App icon: `icon/Cliko.svg`, rendered to `icon/Cliko-1024.png`; `build.sh` turns the PNG into `Cliko.icns`.

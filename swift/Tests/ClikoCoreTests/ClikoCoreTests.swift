@@ -42,7 +42,8 @@ final class XimmioTests: XCTestCase {
     func testParsesCalendarSortedWithKinds() throws {
         let pickups = try Ximmio.parseCalendar(try fixture("calendar"))
         XCTAssertEqual(pickups.count, 12)   // 5 PMD + 2 GFT + 1 paper + 2 rest + 1 tree (bad date skipped) + 1 KCA
-        XCTAssertEqual(pickups.first, Pickup(day: Day(year: 2026, month: 9, day: 30), kind: .pmd, label: "PACKAGES"))
+        XCTAssertEqual(pickups.first, Pickup(day: Day(year: 2026, month: 9, day: 30), kind: .pmd, label: "PACKAGES",
+                                             code: "PACKAGES"))
         XCTAssertEqual(pickups.map(\.day), pickups.map(\.day).sorted())
         XCTAssertEqual(pickups.first { $0.day == Day(year: 2026, month: 10, day: 15) }?.kind, .paper)
         // "Null" description falls back to the type code
@@ -107,6 +108,13 @@ final class ScheduleTests: XCTestCase {
         XCTAssertEqual(next(at(2026, 10, 14, 11, 59)).map(\.kind), [.pmd])
         XCTAssertEqual(next(at(2026, 10, 14, 12, 0)).map(\.kind), [.paper])   // Wednesday afternoon: Thursday's bin
         XCTAssertEqual(next(at(2026, 10, 15, 13, 0)).map(\.kind), [.pmd])
+    }
+
+    /// The icon redraws at noon itself, together with the menu.
+    func testNextCutoffIsTheComingNoon() {
+        XCTAssertEqual(nextCutoff(after: at(2026, 10, 14, 7, 0), calendar: amsterdam), at(2026, 10, 14, 12, 0))
+        XCTAssertEqual(nextCutoff(after: at(2026, 10, 14, 12, 0), calendar: amsterdam), at(2026, 10, 15, 12, 0))
+        XCTAssertEqual(nextCutoff(after: at(2026, 10, 14, 18, 30), calendar: amsterdam), at(2026, 10, 15, 12, 0))
     }
 
     func testSameDayKeepsKindOrder() {
@@ -175,6 +183,17 @@ final class TextTests: XCTestCase {
                        "Tomorrow: Residual waste, Plastic & cans and Klein chemisch afval")
     }
 
+    /// An unknown type without a description shows its code as Ximmio sends it.
+    func testUnknownCodeStaysAsSent() throws {
+        let strings = try loadStrings()
+        let day = Day(year: 2026, month: 11, day: 2)
+        XCTAssertEqual(kindLabel(Pickup(day: day, kind: .other, label: "KCA", code: "KCA"), strings, "nl"), "KCA")
+        XCTAssertEqual(kindLabel(Pickup(day: day, kind: .other, label: "KLEIN CHEMISCH AFVAL", code: "KCA"), strings, "nl"),
+                       "Klein chemisch afval")
+        let parsed = try Ximmio.parseCalendar(try fixture("calendar"))
+        XCTAssertEqual(parsed.first { $0.kind == .other }.map { kindLabel($0, strings, "nl") }, "KCA")
+    }
+
     func testWhenLabels() throws {
         let strings = try loadStrings()
         let now = at(2026, 10, 10, 18)
@@ -234,6 +253,20 @@ final class SettingsTests: XCTestCase {
         try saveJSON(cache, to: url)
         XCTAssertEqual(loadJSON(CalendarCache.self, from: url), cache)
         XCTAssertTrue(String(decoding: try Data(contentsOf: url), as: UTF8.self).contains(#""day" : "2026-10-14""#))
+    }
+
+    /// A calendar cached before pickups kept their code still loads.
+    func testOldCacheWithoutCodeLoads() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let cache = CalendarCache(postcode: "3241AB", houseNumber: "12", fetchedAt: Date(timeIntervalSince1970: 1_800_000_000),
+                                  pickups: [Pickup(day: Day(year: 2026, month: 10, day: 14), kind: .pmd, label: "PMD zak")])
+        let url = dir.appendingPathComponent("calendar.json")
+        try saveJSON(cache, to: url)
+        XCTAssertFalse(String(decoding: try Data(contentsOf: url), as: UTF8.self).contains(#""code""#))   // "postcode" doesn't count
+        let loaded = try XCTUnwrap(loadJSON(CalendarCache.self, from: url))
+        XCTAssertEqual(loaded, cache)
+        XCTAssertNil(loaded.pickups.first?.code)
     }
 }
 
