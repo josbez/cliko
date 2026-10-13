@@ -9,7 +9,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-VERSION="${VERSION:-0.1}"
+VERSION="${VERSION:-0.2}"
 OUT_DIR="${OUT_DIR:-dist}"
 MODE=dev
 [ "${1:-}" = "--release" ] && MODE=release
