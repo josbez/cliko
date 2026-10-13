@@ -263,7 +263,7 @@ final class SettingsTests: XCTestCase {
                                   pickups: [Pickup(day: Day(year: 2026, month: 10, day: 14), kind: .pmd, label: "PMD zak")])
         let url = dir.appendingPathComponent("calendar.json")
         try saveJSON(cache, to: url)
-        XCTAssertFalse(String(decoding: try Data(contentsOf: url), as: UTF8.self).contains("code"))
+        XCTAssertFalse(String(decoding: try Data(contentsOf: url), as: UTF8.self).contains(#""code""#))   // "postcode" doesn't count
         let loaded = try XCTUnwrap(loadJSON(CalendarCache.self, from: url))
         XCTAssertEqual(loaded, cache)
         XCTAssertNil(loaded.pickups.first?.code)
