@@ -63,16 +63,15 @@ The [Cliko design system](https://claude.ai/artifact/XaSd98r3ftzsqJtx1Xmoqy) (pr
 ## Making a release
 
 1. Bump `VERSION` in `scripts/build.sh` and add a `## X.Y` section at the top of `CHANGELOG.md` (it becomes the release notes). Commit and push.
-2. Tag and push (`git tag vX.Y && git push origin vX.Y`), or run Actions → **Release** with the version. The workflow builds `Cliko.dmg` on macOS and publishes the release with it.
-3. Sign that DMG on the release Mac and attach the signature:
+2. On the release Mac, build and sign in one go, then publish both files (`gh release create` also makes the tag):
    ```bash
-   gh release download vX.Y -p Cliko.dmg
-   dist/Cliko.app/Contents/MacOS/Cliko --sign-release Cliko.dmg   # → Cliko.dmg.sig
-   gh release upload vX.Y Cliko.dmg.sig
+   ./scripts/make-dmg.sh   # → Cliko.dmg + Cliko.dmg.sig
+   gh release create vX.Y Cliko.dmg Cliko.dmg.sig --title "Cliko X.Y" \
+     --notes-file <(awk -v v="## X.Y" '$0 == v {on=1; next} /^## / {on=0} on' CHANGELOG.md)
    ```
    Without the `.sig`, installed apps refuse the update. A first install (by hand) doesn't need it.
 
-Or build and sign locally in one go: `./scripts/make-dmg.sh`, then upload both files to a release.
+Without the Mac at hand: Actions → **Release** (by hand, with the version) builds `Cliko.dmg` and publishes the release without a `.sig`. Sign it on the release Mac afterwards: `gh release download vX.Y -p Cliko.dmg`, `dist/Cliko.app/Contents/MacOS/Cliko --sign-release Cliko.dmg`, `gh release upload vX.Y Cliko.dmg.sig`. Until then installed apps refuse the update. Pushing a tag no longer starts the workflow.
 
 Releases are signed with the same Ed25519 key as Usage Meter (`~/.config/claude-usage/release-signing-key.pem`, never in git or CI; `updatePublicKeyHex` in `ClikoCore/Update.swift`). `--sign-release` refuses a key that doesn't match.
 

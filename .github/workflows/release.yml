@@ -1,12 +1,12 @@
-# Push a tag vX.Y, or run it by hand with a version (Actions → Release) →
-# build Cliko.dmg on macOS and publish a GitHub release with it (the tag is
-# created on the current main when it doesn't exist yet).
-# The release key never leaves the release Mac, so the .sig is added by hand
-# afterwards (docs/DEVELOPMENT.md, Making a release).
+# By hand only (Actions → Release, with a version): build Cliko.dmg on macOS
+# and publish a GitHub release with it (the tag is created on the current main
+# when it doesn't exist yet). Not on a tag push: the normal release is made on
+# the release Mac with the .sig (docs/DEVELOPMENT.md, Making a release), and a
+# tag-triggered run would then fail on the release that already exists.
+# The release key never leaves the release Mac, so after this workflow the
+# .sig is added by hand.
 name: Release
 on:
-  push:
-    tags: ["v*"]
   workflow_dispatch:
     inputs:
       version:
@@ -20,7 +20,7 @@ jobs:
   release:
     runs-on: macos-15
     env:
-      VERSION: ${{ inputs.version || github.ref_name }}
+      VERSION: ${{ inputs.version }}
     steps:
       - uses: actions/checkout@v5
       - name: Build DMG
