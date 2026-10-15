@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2
+
+- While the calendar loads after a new address, the menu says "Fetching collection days…" instead of "No collection days known"
+- An unknown waste type without a description shows its code as RAD sends it ("KCA")
+- At noon the icon moves on together with the menu, no longer up to five minutes later
+- An invalid address keeps what you typed: the dialog opens again with it
+
 ## 0.1
 
 First release.
